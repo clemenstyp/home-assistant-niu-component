@@ -448,19 +448,27 @@ class NiuDataBridge(object):
 
     @Throttle(timedelta(seconds=1))
     def updateBat(self):
-        self._dataBat = get_info(MOTOR_BATTERY_API_URI, self._sn, self._token)
+        returnData = get_info(MOTOR_BATTERY_API_URI, self._sn, self._token)
+        if returnData is not False:
+            self._dataBat = returnData
 
     @Throttle(timedelta(seconds=1))
     def updateMoto(self):
-        self._dataMoto = get_info(MOTOR_INDEX_API_URI, self._sn, self._token)
+        returnData = get_info(MOTOR_INDEX_API_URI, self._sn, self._token)
+        if returnData is not False:
+            self._dataMoto = returnData
 
     @Throttle(timedelta(seconds=1))
     def updateMotoInfo(self):
-        self._dataMotoInfo = post_info(MOTOINFO_ALL_API_URI, self._sn, self._token)
+        returnData = post_info(MOTOINFO_ALL_API_URI, self._sn, self._token)
+        if returnData is not False:
+            self._dataMotoInfo = returnData
 
     @Throttle(timedelta(seconds=1))
     def updateTrackInfo(self):
-        self._dataTrackInfo = post_info_track(TRACK_LIST_API_URI, self._sn, self._token)
+        returnData = post_info_track(TRACK_LIST_API_URI, self._sn, self._token)
+        if returnData is not False:
+            self._dataTrackInfo = returnData
 
 
 class NiuSensor(Entity):
