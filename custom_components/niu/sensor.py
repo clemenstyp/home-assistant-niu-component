@@ -408,43 +408,49 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 class NiuDataBridge(object):
     def __init__(self, sn, token):
 
-        self._dataBat = None
-        self._dataMoto = None
-        self._dataMotoInfo = None
-        self._dataTrackInfo = None
+        self._dataBat = {}
+        self._dataMoto = {}
+        self._dataMotoInfo = {}
+        self._dataTrackInfo = {}
         self._sn = sn
         self._token = token
 
     def dataBat(self, id_field):
-        return self._dataBat["data"]["batteries"]["compartmentA"][id_field]
+        return self._dataBat.get("data", {}).get("batteries", {}).get("compartmentA", {}).get(id_field, None)
 
     def dataMoto(self, id_field):
-        return self._dataMoto["data"][id_field]
+        return self._dataMotoget("data", {}).get{id_field, None)
 
     def dataDist(self, id_field):
-        return self._dataMoto["data"]["lastTrack"][id_field]
+        return self._dataMoto.get("data", {}).get("lastTrack", {}).get(id_field, None)
 
     def dataPos(self, id_field):
-        return self._dataMoto["data"]["postion"][id_field]
+        return self._dataMoto.get("data", {}).get("postion", {}).get(id_field, None)
 
     def dataOverall(self, id_field):
-        return self._dataMotoInfo["data"][id_field]
+        return self._dataMotoInfo.get("data", {}).get(id_field, None)
 
     def dataTrack(self, id_field):
         if id_field == "startTime" or id_field == "endTime":
-            return datetime.fromtimestamp(
-                (self._dataTrackInfo["data"][0][id_field]) / 1000
-            ).strftime("%Y-%m-%d %H:%M:%S")
+            start_or_end_time = self._dataTrackInfo.get("data", []).get(0, {}).get(id_field, None)
+            if start_or_end_time:
+                return datetime.fromtimestamp(start_or_end_time / 1000).strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                return None
         if id_field == "ridingtime":
-            return strftime(
-                "%H:%M:%S", gmtime(self._dataTrackInfo["data"][0][id_field])
-            )
+            ridingtime = self._dataTrackInfo.get("data", []).get(0, {}).get(id_field, None)
+            if ridingtime:
+                return strftime("%H:%M:%S", gmtime(ridingtime))
+            else:
+                return None
         if id_field == "track_thumb":
-            thumburl = self._dataTrackInfo["data"][0][id_field].replace(
-                "app-api.niucache.com", "app-api-fk.niu.com"
-            )
-            return thumburl.replace("/track/thumb/", "/track/overseas/thumb/")
-        return self._dataTrackInfo["data"][0][id_field]
+            track_thumb =  self._dataTrackInfo.get("data", []).get(0, {}).get(id_field, None)
+            if track_thumb:
+                thumburl = track_thumb.replace("app-api.niucache.com", "app-api-fk.niu.com")
+                return thumburl.replace("/track/thumb/", "/track/overseas/thumb/")
+            else:
+                return None
+        return self._dataTrackInfo.get("data", []).get(0, {}).get(id_field, None)
 
     @Throttle(timedelta(seconds=1))
     def updateBat(self):
