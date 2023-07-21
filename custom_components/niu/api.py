@@ -21,15 +21,23 @@ class NiuApi:
         self.dataMotoInfo = None
         self.dataTrackInfo = None
 
+    def get_nested(dictionary, keys, default=None):
+        for key in keys:
+            if isinstance(dictionary, dict):
+                dictionary = dictionary.get(key, default)
+            else:
+                return default
+        return dictionary
+
     def initApi(self):
         self.token = self.get_token()
         api_uri = MOTOINFO_LIST_API_URI
-        self.sn = self.get_vehicles_info(api_uri)["data"]["items"][self.scooter_id][
+        self.sn = self.get_nested(self.get_vehicles_info(api_uri),["data", "items", self.scooter_id, 
             "sn_id"
-        ]
-        self.sensor_prefix = self.get_vehicles_info(api_uri)["data"]["items"][
+        ])
+        self.sensor_prefix = self.get_nested(self.get_vehicles_info(api_uri),["data", "items", 
             self.scooter_id
-        ]["scooter_name"]
+        , "scooter_name"])
         self.updateBat()
         self.updateMoto()
         self.updateMotoInfo()
@@ -54,7 +62,7 @@ class NiuApi:
             print(e)
             return False
         data = json.loads(r.content.decode())
-        return data["data"]["token"]["access_token"]
+        return self.get_nested(data,["data", "token", "access_token"])
 
     def get_vehicles_info(self, path):
         token = self.token
@@ -139,34 +147,36 @@ class NiuApi:
             return False
         return data
 
-    def getDataBat(self, id_field): 
-        return self.dataBat["data"]["batteries"]["compartmentA"][id_field]
+    def getDataBat(self, id_field):
+        return self.get_nested(self.dataBat, ["data", "batteries", "compartmentA", id_field])
 
     def getDataMoto(self, id_field):
-        return self.dataMoto["data"][id_field]
+        return self.get_nested(self.dataMoto,["data", id_field])
 
     def getDataDist(self, id_field):
-        return self.dataMoto["data"]["lastTrack"][id_field]
+        return self.get_nested(self.dataMoto,["data", "lastTrack", id_field])
 
     def getDataPos(self, id_field):
-        return self.dataMoto["data"]["postion"][id_field]
+        return self.get_nested(self.dataMoto,["data", "postion", id_field])
 
     def getDataOverall(self, id_field):
-        return self.dataMotoInfo["data"][id_field]
+        return self.get_nested(self.dataMotoInfo,["data", id_field])
 
     def getDataTrack(self, id_field):
-        if id_field == "startTime" or id_field == "endTime":
-            return datetime.fromtimestamp(
-                (self.dataTrackInfo["data"][0][id_field]) / 1000
-            ).strftime("%Y-%m-%d %H:%M:%S")
-        if id_field == "ridingtime":
-            return strftime("%H:%M:%S", gmtime(self.dataTrackInfo["data"][0][id_field]))
-        if id_field == "track_thumb":
-            thumburl = self.dataTrackInfo["data"][0][id_field].replace(
-                "app-api.niucache.com", "app-api-fk.niu.com"
-            )
-            return thumburl.replace("/track/thumb/", "/track/overseas/thumb/")
-        return self.dataTrackInfo["data"][0][id_field]
+        data_value = self.get_nested(self.dataTrackInfo,["data", 0, id_field])
+        if data_value and isinstance(data_value, int):
+            if id_field == "startTime" or id_field == "endTime":
+                return datetime.fromtimestamp(data_value / 1000).strftime("%Y-%m-%d %H:%M:%S")
+            if id_field == "ridingtime":
+                return strftime("%H:%M:%S", gmtime(data_value))
+
+        if data_value and isinstance(data_value, str):
+            if id_field == "track_thumb":
+                thumburl = data_value.replace(
+                    "app-api.niucache.com", "app-api-fk.niu.com"
+                )
+                return thumburl.replace("/track/thumb/", "/track/overseas/thumb/")
+        return data_value
 
     def updateBat(self):
         self.dataBat = self.get_info(MOTOR_BATTERY_API_URI)
