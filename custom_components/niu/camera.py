@@ -63,6 +63,8 @@ class LastTrackCamera(GenericCamera):
     @property
     def is_on(self) -> bool:
         """Return true if on."""
+        is_on_value = self._last_image != b""
+        _LOGGER.debug(f"is on?: {is_on_value}")
         return self._last_image != b""
 
     @property
@@ -101,7 +103,7 @@ class LastTrackCamera(GenericCamera):
             _LOGGER.error("Error getting new camera image from %s: %s", self._name, err)
             return self._last_image
 
-        _LOGGER.debug(f"last_track_url url: {last_track_url}")
         self._last_url = last_track_url
         self._previous_image = self._last_image
+        _LOGGER.debug(f"return self._last_image: {self._last_image}")
         return self._last_image
