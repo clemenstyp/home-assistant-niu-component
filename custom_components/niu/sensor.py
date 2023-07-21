@@ -129,7 +129,7 @@ class NiuSensor(Entity):
                 "longitude": self._api.getDataPos("lng"),
                 "gsm": self._api.getDataMoto("gsm"),
                 "gps": self._api.getDataMoto("gps"),
-                "time": self._api.getDataDist("time"),
+                "time": self._api.getDataDist("time"), # the name is unclear: currently this returns the timestamp of the last ride, but it would be more fitting to return the timestamp of the last time the scooter synchronised (or the local time of the scooter)
                 "range": self._api.getDataMoto("estimatedMileage"),
                 "battery": self._api.getDataBat("batteryCharging"),
                 "battery_grade": self._api.getDataBat("gradeBattery"),
