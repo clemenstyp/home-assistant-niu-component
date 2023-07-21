@@ -24,6 +24,7 @@ class NiuApi:
         self.dataTrackInfo = None
 
     def get_nested(self, collection, keys, default=None):
+        _LOGGER.debug(f"get_nested: collection: {collection} - keys: {keys} - default: {default}")
         for key in keys:
             if isinstance(collection, dict):
                 collection = collection.get(key, default)
