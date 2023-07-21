@@ -63,7 +63,8 @@ class NiuApi:
             print(e)
             return False
         data = json.loads(r.content.decode())
-        return self.get_nested(data, ["data", "token", "access_token"])
+        #return self.get_nested(data, ["data", "token", "access_token"])
+        return data["data"]["token"]["access_token"]
 
     def get_vehicles_info(self, path):
         token = self.token
