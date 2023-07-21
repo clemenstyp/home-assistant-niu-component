@@ -24,7 +24,7 @@ class NiuApi:
         self.dataTrackInfo = None
 
     def get_nested(self, collection, keys, default=None):
-        _LOGGER.debug(f"get_nested: collection: {collection} - keys: {keys} - default: {default}")
+        # _LOGGER.debug(f"get_nested: collection: {collection} - keys: {keys} - default: {default}")
         if isinstance(keys, list):
             for key in keys:
                 if isinstance(collection, dict):
@@ -33,12 +33,12 @@ class NiuApi:
                     try:
                         collection = collection[int(key)]
                     except (IndexError, ValueError, TypeError):
-                        _LOGGER.debug(f"get_nested: return default (in except): {default}")
+                        # _LOGGER.warning(f"get_nested: return default (in except): {default}")
                         return default
                 else:
-                    _LOGGER.debug(f"get_nested: return default: {default}")
+                    # _LOGGER.debug(f"get_nested: return default: {default}")
                     return default
-            _LOGGER.debug(f"get_nested: return value: {collection}")
+            # _LOGGER.debug(f"get_nested: return value: {collection}")
         else:
             _LOGGER.debug(f"get_nested: keys are not a list: {collection}")
             if isinstance(collection, dict):
@@ -47,7 +47,7 @@ class NiuApi:
                 try:
                     collection = collection[int(keys)]
                 except (IndexError, ValueError, TypeError):
-                    _LOGGER.debug(f"get_nested: return default (in second except): {default}")
+                    #_LOGGER.debug(f"get_nested: return default (in second except): {default}")
                     return default
         return collection
 
@@ -201,6 +201,7 @@ class NiuApi:
                 thumburl = data_value.replace(
                     "app-api.niucache.com", "app-api-fk.niu.com"
                 )
+                _LOGGER.debug(f"track_thumb url: {thumburl}")
                 return thumburl.replace("/track/thumb/", "/track/overseas/thumb/")
         return data_value
 
