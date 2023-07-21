@@ -48,8 +48,8 @@ async def async_setup_entry(hass, entry, async_add_entities) -> None:
 
     entry = {
         CONF_NAME: camera_name,
-        CONF_STILL_IMAGE_URL: "https://app-api-fk.niu.com/",
-        CONF_STREAM_SOURCE: None,
+        CONF_STILL_IMAGE_URL: "",
+        # CONF_STREAM_SOURCE: None,
         CONF_AUTHENTICATION: "basic",
         "username": None,
         "password": None,
@@ -124,3 +124,7 @@ class LastTrackCamera(GenericCamera):
     #     self._last_url = last_track_url
     #     self._previous_image = self._last_image
     #     return self._last_image
+
+    async def stream_source(self) -> str | None:
+        """Return the source of the stream."""
+        return None
