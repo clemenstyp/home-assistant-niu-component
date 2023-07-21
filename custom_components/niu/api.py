@@ -201,7 +201,7 @@ class NiuApi:
                 thumburl = data_value.replace(
                     "app-api.niucache.com", "app-api-fk.niu.com"
                 )
-                _LOGGER.debug(f"track_thumb url: {thumburl.replace('/track/thumb/', '/track/overseas/thumb/')}")
+                # _LOGGER.debug(f"track_thumb url: {thumburl.replace('/track/thumb/', '/track/overseas/thumb/')}")
                 return thumburl.replace("/track/thumb/", "/track/overseas/thumb/")
         return data_value
 
