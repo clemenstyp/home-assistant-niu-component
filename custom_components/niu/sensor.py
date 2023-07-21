@@ -137,6 +137,13 @@ class NiuSensor(Entity):
                 "battery_grade": self._api.getDataBat("gradeBattery"),
                 "centre_ctrl_batt": self._api.getDataMoto("centreCtrlBattery"),
             }
+        elif  self._sensor_grp == SENSOR_TYPE_BAT:
+            return {
+                "scooter_time": self._api.getDataMoto("time"),
+                "battery": self._api.getDataBat("batteryCharging"),
+                "battery_grade": self._api.getDataBat("gradeBattery"),
+                "centre_ctrl_batt": self._api.getDataMoto("centreCtrlBattery"),
+            }
 
     @Throttle(timedelta(minutes=15))
     async def async_update(self):
