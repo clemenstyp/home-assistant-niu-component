@@ -23,7 +23,7 @@ class NiuApi:
         self.dataMotoInfo = None
         self.dataTrackInfo = None
 
-    def get_nested(collection, keys, default=None):
+    def get_nested(self, collection, keys, default=None):
         for key in keys:
             if isinstance(collection, dict):
                 collection = collection.get(key, default)
