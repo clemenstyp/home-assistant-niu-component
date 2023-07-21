@@ -40,14 +40,14 @@ class NiuApi:
         self.token = self.get_token()
         _LOGGER.debug(f"get_token returned content: {self.token}")
         api_uri = MOTOINFO_LIST_API_URI
-        #self.sn = self.get_nested(self.get_vehicles_info(api_uri), ["data", "items", self.scooter_id, "sn_id"])
-        #self.sensor_prefix = self.get_nested(self.get_vehicles_info(api_uri), ["data", "items", self.scooter_id, "scooter_name"])
-        self.sn = self.get_vehicles_info(api_uri)["data"]["items"][self.scooter_id][
-            "sn_id"
-        ]
-        self.sensor_prefix = self.get_vehicles_info(api_uri)["data"]["items"][
-            self.scooter_id
-        ]["scooter_name"]
+        self.sn = self.get_nested(self.get_vehicles_info(api_uri), ["data", "items", self.scooter_id, "sn_id"])
+        self.sensor_prefix = self.get_nested(self.get_vehicles_info(api_uri), ["data", "items", self.scooter_id, "scooter_name"])
+        # self.sn = self.get_vehicles_info(api_uri)["data"]["items"][self.scooter_id][
+        #     "sn_id"
+        # ]
+        # self.sensor_prefix = self.get_vehicles_info(api_uri)["data"]["items"][
+        #     self.scooter_id
+        # ]["scooter_name"]
         self.updateBat()
         self.updateMoto()
         self.updateMotoInfo()
@@ -72,8 +72,8 @@ class NiuApi:
             print(e)
             return False
         data = json.loads(r.content.decode())
-        #return self.get_nested(data, ["data", "token", "access_token"])
-        return data["data"]["token"]["access_token"]
+        return self.get_nested(data, ["data", "token", "access_token"], "")
+        #return data["data"]["token"]["access_token"]
 
     def get_vehicles_info(self, path):
         token = self.token
