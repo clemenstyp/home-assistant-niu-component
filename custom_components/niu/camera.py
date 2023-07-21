@@ -54,17 +54,15 @@ class LastTrackCamera(GenericCamera):
         self._api = api
         super().__init__(hass, device_info, identifier, title)
 
-    @property
-    @final
-    def state(self) -> str:
-        """Return the camera state."""
-        return STATE_IDLE
+    # @property
+    # @final
+    # def state(self) -> str:
+    #     """Return the camera state."""
+    #     return STATE_IDLE
 
     @property
     def is_on(self) -> bool:
         """Return true if on."""
-        is_on_value = self._last_image != b""
-        _LOGGER.debug(f"is on?: {is_on_value}")
         return self._last_image != b""
 
     @property
@@ -83,7 +81,7 @@ class LastTrackCamera(GenericCamera):
     ) -> bytes | None:
         get_last_track = lambda: self._api.getDataTrack("track_thumb")
         last_track_url = await self.hass.async_add_executor_job(get_last_track)
-        _LOGGER.debug(f"last_track_url url: {last_track_url}")
+        # _LOGGER.debug(f"last_track_url url: {last_track_url}")
                 
         if last_track_url == self._last_url and self._previous_image != b"":
             # The path image is the same as before so the image is the same:
@@ -105,5 +103,4 @@ class LastTrackCamera(GenericCamera):
 
         self._last_url = last_track_url
         self._previous_image = self._last_image
-        _LOGGER.debug(f"return self._last_image: {self._last_image}")
         return self._last_image
