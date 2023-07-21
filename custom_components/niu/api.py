@@ -9,6 +9,8 @@ import requests
 
 from .const import *
 
+import logging
+_LOGGER = logging.getLogger(__name__)
 
 class NiuApi:
     def __init__(self, username, password, scooter_id) -> None:
@@ -36,9 +38,16 @@ class NiuApi:
 
     def initApi(self):
         self.token = self.get_token()
+        _LOGGER.debug(f"get_token returned content: {self.token}")
         api_uri = MOTOINFO_LIST_API_URI
-        self.sn = self.get_nested(self.get_vehicles_info(api_uri), ["data", "items", self.scooter_id, "sn_id"])
-        self.sensor_prefix = self.get_nested(self.get_vehicles_info(api_uri), ["data", "items", self.scooter_id, "scooter_name"])
+        #self.sn = self.get_nested(self.get_vehicles_info(api_uri), ["data", "items", self.scooter_id, "sn_id"])
+        #self.sensor_prefix = self.get_nested(self.get_vehicles_info(api_uri), ["data", "items", self.scooter_id, "scooter_name"])
+        self.sn = self.get_vehicles_info(api_uri)["data"]["items"][self.scooter_id][
+            "sn_id"
+        ]
+        self.sensor_prefix = self.get_vehicles_info(api_uri)["data"]["items"][
+            self.scooter_id
+        ]["scooter_name"]
         self.updateBat()
         self.updateMoto()
         self.updateMotoInfo()
