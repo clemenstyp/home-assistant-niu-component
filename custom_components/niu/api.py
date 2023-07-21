@@ -21,23 +21,24 @@ class NiuApi:
         self.dataMotoInfo = None
         self.dataTrackInfo = None
 
-    def get_nested(dictionary, keys, default=None):
+    def get_nested(collection, keys, default=None):
         for key in keys:
-            if isinstance(dictionary, dict):
-                dictionary = dictionary.get(key, default)
+            if isinstance(collection, dict):
+                collection = collection.get(key, default)
+            elif isinstance(collection, list):
+                try:
+                    collection = collection[int(key)]
+                except (IndexError, ValueError, TypeError):
+                    return default
             else:
                 return default
-        return dictionary
+        return collection
 
     def initApi(self):
         self.token = self.get_token()
         api_uri = MOTOINFO_LIST_API_URI
-        self.sn = self.get_nested(self.get_vehicles_info(api_uri),["data", "items", self.scooter_id, 
-            "sn_id"
-        ])
-        self.sensor_prefix = self.get_nested(self.get_vehicles_info(api_uri),["data", "items", 
-            self.scooter_id
-        , "scooter_name"])
+        self.sn = self.get_nested(self.get_vehicles_info(api_uri), ["data", "items", self.scooter_id, "sn_id"])
+        self.sensor_prefix = self.get_nested(self.get_vehicles_info(api_uri), ["data", "items", self.scooter_id, "scooter_name"])
         self.updateBat()
         self.updateMoto()
         self.updateMotoInfo()
@@ -62,7 +63,7 @@ class NiuApi:
             print(e)
             return False
         data = json.loads(r.content.decode())
-        return self.get_nested(data,["data", "token", "access_token"])
+        return self.get_nested(data, ["data", "token", "access_token"])
 
     def get_vehicles_info(self, path):
         token = self.token
