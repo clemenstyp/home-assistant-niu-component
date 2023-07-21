@@ -32,9 +32,12 @@ class NiuApi:
                 try:
                     collection = collection[int(key)]
                 except (IndexError, ValueError, TypeError):
+                    _LOGGER.debug(f"get_nested: return default (in except): {default}")
                     return default
             else:
+                _LOGGER.debug(f"get_nested: return default: {default}")
                 return default
+        _LOGGER.debug(f"get_nested: return value: {collection}")
         return collection
 
     def initApi(self):
@@ -163,19 +166,19 @@ class NiuApi:
         return self.get_nested(self.dataBat, ["data", "batteries", "compartmentA", id_field])
 
     def getDataMoto(self, id_field):
-        return self.get_nested(self.dataMoto,["data", id_field])
+        return self.get_nested(self.dataMoto, ["data", id_field])
 
     def getDataDist(self, id_field):
-        return self.get_nested(self.dataMoto,["data", "lastTrack", id_field])
+        return self.get_nested(self.dataMoto, ["data", "lastTrack", id_field])
 
     def getDataPos(self, id_field):
-        return self.get_nested(self.dataMoto,["data", "postion", id_field])
+        return self.get_nested(self.dataMoto, ["data", "postion", id_field])
 
     def getDataOverall(self, id_field):
-        return self.get_nested(self.dataMotoInfo,["data", id_field])
+        return self.get_nested(self.dataMotoInfo, ["data", id_field])
 
     def getDataTrack(self, id_field):
-        data_value = self.get_nested(self.dataTrackInfo,["data", 0, id_field])
+        data_value = self.get_nested(self.dataTrackInfo, ["data", 0, id_field])
         if data_value and isinstance(data_value, int):
             if id_field == "startTime" or id_field == "endTime":
                 return datetime.fromtimestamp(data_value / 1000).strftime("%Y-%m-%d %H:%M:%S")
