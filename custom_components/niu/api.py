@@ -25,19 +25,30 @@ class NiuApi:
 
     def get_nested(self, collection, keys, default=None):
         _LOGGER.debug(f"get_nested: collection: {collection} - keys: {keys} - default: {default}")
-        for key in keys:
+        if isinstance(keys, list):
+            for key in keys:
+                if isinstance(collection, dict):
+                    collection = collection.get(key, default)
+                elif isinstance(collection, list):
+                    try:
+                        collection = collection[int(key)]
+                    except (IndexError, ValueError, TypeError):
+                        _LOGGER.debug(f"get_nested: return default (in except): {default}")
+                        return default
+                else:
+                    _LOGGER.debug(f"get_nested: return default: {default}")
+                    return default
+            _LOGGER.debug(f"get_nested: return value: {collection}")
+        else:
+            _LOGGER.debug(f"get_nested: keys are not a list: {collection}")
             if isinstance(collection, dict):
-                collection = collection.get(key, default)
+                    collection = collection.get(keys, default)
             elif isinstance(collection, list):
                 try:
-                    collection = collection[int(key)]
+                    collection = collection[int(keys)]
                 except (IndexError, ValueError, TypeError):
-                    _LOGGER.debug(f"get_nested: return default (in except): {default}")
+                    _LOGGER.debug(f"get_nested: return default (in second except): {default}")
                     return default
-            else:
-                _LOGGER.debug(f"get_nested: return default: {default}")
-                return default
-        _LOGGER.debug(f"get_nested: return value: {collection}")
         return collection
 
     def initApi(self):
