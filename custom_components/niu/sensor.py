@@ -33,7 +33,7 @@ async def async_setup_entry(hass, entry, async_add_entities) -> None:
     # add sensors
     devices = []
     for sensor in sensors_selected:
-        if sensor != "LastTrackThumb":
+        if True or sensor != "LastTrackThumb":
             sensor_config = SENSOR_TYPES[sensor]
             devices.append(
                 NiuSensor(
