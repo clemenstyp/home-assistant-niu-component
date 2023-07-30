@@ -17,6 +17,7 @@ class NiuApi:
         self.username = username
         self.password = password
         self.scooter_id = int(scooter_id)
+        self.request_timeout = 7
 
         self.dataBat = None
         self.dataMoto = None
@@ -82,9 +83,14 @@ class NiuApi:
             "app_id": "niu_ktdrr960",
         }
         try:
-            r = requests.post(url, data=data)
-        except BaseException as e:
-            print(e)
+            r = requests.post(url, data=data, timeout=self.request_timeout)
+        except ConnectionError:
+            return False
+        except Exception as e:
+            # Catch any exception - execution will end here because
+            # requests can't connect to http://localhost/6000
+            _LOGGER.warning("Error Name: ", e.__class__.__name__)
+            _LOGGER.warning("Error Message: ", e)
             return False
         data = json.loads(r.content.decode())
         return self.get_nested(data, ["data", "token", "access_token"], "")
@@ -96,8 +102,14 @@ class NiuApi:
         url = API_BASE_URL + path
         headers = {"token": token}
         try:
-            r = requests.get(url, headers=headers, data=[])
+            r = requests.get(url, headers=headers, data=[], timeout=self.request_timeout)
         except ConnectionError:
+            return False
+        except Exception as e:
+            # Catch any exception - execution will end here because
+            # requests can't connect to http://localhost/6000
+            _LOGGER.warning("Error Name: ", e.__class__.__name__)
+            _LOGGER.warning("Error Message: ", e)
             return False
         if r.status_code != 200:
             return False
@@ -118,9 +130,15 @@ class NiuApi:
             "user-agent": "manager/4.10.4 (android; IN2020 11);lang=zh-CN;clientIdentifier=Domestic;timezone=Asia/Shanghai;model=IN2020;deviceName=IN2020;ostype=android",
         }
         try:
-            r = requests.get(url, headers=headers, params=params)
+            r = requests.get(url, headers=headers, params=params, timeout=self.request_timeout)
 
-        except ConnectionError:
+        except ConnectionError, MaxRetryError:
+            return False
+        except Exception as e:
+            # Catch any exception - execution will end here because
+            # requests can't connect to http://localhost/6000
+            _LOGGER.warning("Error Name: ", e.__class__.__name__)
+            _LOGGER.warning("Error Message: ", e)
             return False
         if r.status_code != 200:
             return False
@@ -138,8 +156,14 @@ class NiuApi:
         params = {}
         headers = {"token": token, "Accept-Language": "en-US"}
         try:
-            r = requests.post(url, headers=headers, params=params, data={"sn": sn})
+            r = requests.post(url, headers=headers, params=params, data={"sn": sn}, timeout=self.request_timeout)
         except ConnectionError:
+            return False
+        except Exception as e:
+            # Catch any exception - execution will end here because
+            # requests can't connect to http://localhost/6000
+            _LOGGER.warning("Error Name: ", e.__class__.__name__)
+            _LOGGER.warning("Error Message: ", e)
             return False
         if r.status_code != 200:
             return False
@@ -163,8 +187,15 @@ class NiuApi:
                 headers=headers,
                 params=params,
                 json={"index": "0", "pagesize": 10, "sn": sn},
+                timeout=self.request_timeout,
             )
         except ConnectionError:
+            return False
+        except Exception as e:
+            # Catch any exception - execution will end here because
+            # requests can't connect to http://localhost/6000
+            _LOGGER.warning("Error Name: ", e.__class__.__name__)
+            _LOGGER.warning("Error Message: ", e)
             return False
         if r.status_code != 200:
             return False
