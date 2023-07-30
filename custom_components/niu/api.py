@@ -132,7 +132,7 @@ class NiuApi:
         try:
             r = requests.get(url, headers=headers, params=params, timeout=self.request_timeout)
 
-        except ConnectionError, MaxRetryError:
+        except ConnectionError:
             return False
         except Exception as e:
             # Catch any exception - execution will end here because
