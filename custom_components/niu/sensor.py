@@ -84,7 +84,7 @@ class NiuSensor(Entity):
         self._id_name = id_name  # info field for parsing the URL
         self._sensor_grp = sensor_grp  # info field for choosing the right URL
         self._icon = icon
-        self._state = None
+        self._state = 0
 
     @property
     def unique_id(self):
@@ -145,7 +145,7 @@ class NiuSensor(Entity):
                 "centre_ctrl_batt": self._api.getDataMoto("centreCtrlBattery"),
             }
 
-    @Throttle(timedelta(seconds=30))
+    @Throttle(timedelta(minutes=15))
     async def async_update(self):
         if self._sensor_grp == SENSOR_TYPE_BAT:
             await self._hass.async_add_executor_job(self._api.updateBat)
