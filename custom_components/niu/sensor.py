@@ -145,7 +145,7 @@ class NiuSensor(Entity):
                 "centre_ctrl_batt": self._api.getDataMoto("centreCtrlBattery"),
             }
 
-    @Throttle(timedelta(minutes=15))
+    @Throttle(timedelta(seconds=60))
     async def async_update(self):
         if self._sensor_grp == SENSOR_TYPE_BAT:
             await self._hass.async_add_executor_job(self._api.updateBat)
